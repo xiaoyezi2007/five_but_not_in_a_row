@@ -321,6 +321,38 @@ async def ws_room(websocket: WebSocket, room_id: str) -> None:
                 await broadcast(room, payload, exclude_player_id=None)
                 continue
 
+            if msg_type == "reset_game":
+                async with room.lock:
+                    if room.phase != "finished":
+                        await safe_send_json(websocket, {"type": "error", "message": "can only reset after game finished"})
+                        continue
+
+                    room.phase = "lobby"
+                    room.ready.clear()
+                    room.shapes.clear()
+                    room.winner = None
+                    room.win_cells = None
+                    room.board = []
+                    if room.players:
+                        room.turn = room.host_id or next(iter(room.players.keys()))
+                    else:
+                        room.turn = None
+
+                    payload = {
+                        "type": "game_reset",
+                        "roomId": room_id,
+                        "protocolVersion": PROTOCOL_VERSION,
+                        "phase": room.phase,
+                        "turn": room.turn,
+                        "hostId": room.host_id,
+                        "turnMode": room.turn_mode,
+                        "ready": list(room.ready),
+                        "colors": dict(room.colors),
+                    }
+
+                await broadcast(room, payload, exclude_player_id=None)
+                continue
+
             if msg_type == "move":
                 x = msg.get("x")
                 y = msg.get("y")

@@ -81,6 +81,7 @@ cd frontend
 客户端 -> 服务端：
 - 首包必须是：`{ "type": "hello", "playerId": "p1", "name": "Alice" }`
 - 主机设置先手（仅 lobby 阶段，且仅主机可设置）：`{"type":"set_turn_mode","mode":"host"|"client"|"random"}`
+- 再来一局（仅 finished 阶段）：`{"type":"reset_game"}`（服务端会重置到 lobby，双方重新选形状/颜色/先手后再 Confirm Shape）
 - 设置并确认形状（必须 5 个点，坐标 0..4）：
 	`{"type":"set_shape","points":[{"x":0,"y":0},{"x":1,"y":0},{"x":2,"y":0},{"x":3,"y":0},{"x":4,"y":0}]}`
 - 落子：`{ "type": "move", "x": 7, "y": 7 }`（服务端会校验回合/占用/边界）
@@ -91,6 +92,7 @@ cd frontend
 - `player_ready`：某玩家已确认形状
 - `game_start`：双方都确认后进入对局，同时下发双方 shape
 - `move_applied`：服务端接受了某一步落子，并广播 `turn/winner/phase`
+- `game_reset`：服务端将房间重置回 lobby（清空棋盘/胜负/ready/shape），允许重新设置
 - `player_joined` / `player_left` / `chat`
 
 > 说明：现在已经有最小版规则与服务端胜负判定；断线重连/观战/复盘等暂未实现。

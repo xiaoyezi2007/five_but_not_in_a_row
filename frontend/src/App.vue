@@ -47,6 +47,17 @@ type WsInMessage =
       turnMode: 'host' | 'client' | 'random'
     }
   | {
+      type: 'game_reset'
+      roomId: string
+      protocolVersion?: number
+      phase: 'lobby'
+      turn: string | null
+      hostId: string | null
+      turnMode: 'host' | 'client' | 'random'
+      ready: string[]
+      colors: Record<string, string>
+    }
+  | {
       type: 'game_start'
       roomId: string
       protocolVersion?: number
@@ -235,6 +246,18 @@ function connect() {
       } else if (msg.type === 'turn_mode_update') {
         hostId.value = msg.hostId
         turnMode.value = msg.turnMode
+      } else if (msg.type === 'game_reset') {
+        phase.value = 'lobby'
+        turn.value = msg.turn
+        hostId.value = msg.hostId
+        turnMode.value = msg.turnMode
+        winner.value = null
+        winCells.value = new Set()
+        shapes.value = {}
+        ready.value = new Set(msg.ready)
+        colors.value = msg.colors || colors.value
+        initBoard(boardSize.value)
+        resetLocalShape()
       } else if (msg.type === 'colors_update') {
         colors.value = msg.colors || {}
       } else if (msg.type === 'game_start') {
@@ -353,6 +376,12 @@ function setColor() {
   sendJson({ type: 'set_color', color: form.color })
 }
 
+function resetGame() {
+  if (status.value !== 'connected') return
+  if (phase.value !== 'finished') return
+  sendJson({ type: 'reset_game' })
+}
+
 const otherPlayer = computed(() => players.value.find((p) => p.playerId !== myPlayerId.value) || null)
 const otherReady = computed(() => (otherPlayer.value ? ready.value.has(otherPlayer.value.playerId) : false))
 
@@ -414,6 +443,7 @@ onBeforeUnmount(() => {
           <button @click="connect" :disabled="status !== 'disconnected'">Connect</button>
           <button @click="disconnect" :disabled="status === 'disconnected'">Disconnect</button>
           <button @click="resetLocalShape" :disabled="phase !== 'lobby' || iAmReady">Reset Shape</button>
+          <button @click="resetGame" :disabled="status !== 'connected' || phase !== 'finished'">再来一局</button>
           <span>Status: {{ status }} | Phase: {{ phase }}</span>
           <span style="opacity: 0.8">{{ wsUrl }}</span>
         </div>
