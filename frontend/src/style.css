@@ -1,0 +1,69 @@
+:root {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji",
+    "Segoe UI Emoji";
+}
+
+body {
+  margin: 0;
+  padding: 16px;
+}
+
+input, button {
+  font: inherit;
+}
+
+.row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.panel {
+  border: 1px solid #ddd;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(15, 28px);
+  grid-auto-rows: 28px;
+  gap: 2px;
+}
+
+.cell {
+  width: 28px;
+  height: 28px;
+  border: 1px solid #ccc;
+  background: #fafafa;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.cell:disabled {
+  cursor: not-allowed;
+}
+
+.stone {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.log {
+  height: 220px;
+  overflow: auto;
+  background: #111;
+  color: #eee;
+  padding: 8px;
+  border-radius: 8px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+  font-size: 12px;
+  white-space: pre-wrap;
+}
