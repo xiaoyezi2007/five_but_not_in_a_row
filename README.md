@@ -1,12 +1,12 @@
-# 新五子棋 (Vue3 + FastAPI)
+# 新五子棋
 
 传统的五子棋……
 
-在 Radmin VPN 下，两台电脑直接联机进行双人对局。
+在 Radmin VPN 下，两台电脑联机进行双人对局。
 
 实现方式：
-- **房主机器**运行 FastAPI（WebSocket 房间服务）。
-- **另一台机器**通过 Radmin VPN 的虚拟局域网 IP 直接连接房主的 WebSocket。
+- **房主机器**运行代码。
+- **另一台机器**通过 Radmin VPN 的虚拟局域网 IP 直接连接房主。
 
 ## 目录
 - `backend/`：FastAPI + WebSocket（2 人房间、转发 move/chat）
@@ -14,15 +14,12 @@
 
 ## 启动（Windows）
 
-如果你希望另一位同学不需要下载代码、不需要运行任何程序，只要在浏览器输入一个 URL：
-
 1) 在**房主机器**（有代码的那台）在项目根目录运行：
 ```powershell
 .\host.ps1
 ```
-它会：打包前端 → 拷贝到 `backend/static` → 启动后端并托管网页。
 
-2) 同学在浏览器访问：
+2) 另一台机器在浏览器访问：http://\[房主ip\]:8000
 
 注意：需要在房主 Windows 防火墙里允许 `8000` 端口入站（至少对 Radmin VPN 网络）。
 
